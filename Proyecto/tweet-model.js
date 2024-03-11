@@ -1,5 +1,5 @@
 // MODELO
-export const tweets = [{ // Lo exportamos
+/* export const tweets = [{ // Lo exportamos
     handler: '@usuario1',
     date: new Date().toISOString(),
     message: 'Eligendi fugiat veniam a neque omnis doloribus sequi porro expedita ullam excepturi.',
@@ -23,3 +23,15 @@ export const tweets = [{ // Lo exportamos
     message: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
     likes: 400,
   }];
+  */ 
+
+  export function getTweets() {
+  const url = 'https://fake-tweets-api-kc.vercel.app/posts';
+
+    return new Promise(function(resolve, reject) {
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {resolve(data)}) // Aqui damos por termianda la promesa y ponemos el resolve para mandarlos al controlador
+        .catch(() => reject('Error al obtener los tweets'))
+    })
+  }

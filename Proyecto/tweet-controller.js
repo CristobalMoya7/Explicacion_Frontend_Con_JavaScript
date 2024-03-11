@@ -1,4 +1,4 @@
-import { tweets } from "./tweet-model.js";
+import { getTweets } from "./tweet-model.js";
 import { buildTweet } from "./tweet-view.js";
 
 // CONTROLADOR
@@ -14,13 +14,20 @@ export function tweetListController (tweetList) {
   showTweetsButton.addEventListener('click', () => {
 
     // 3 Mostar los tweets
-    tweets.forEach(tweet => {
-      const tweetItem = document.createElement('div');
-    
-      tweetItem.innerHTML = buildTweet(tweet);
-    
-      tweetList.appendChild(tweetItem)
-    })
+
+    getTweets()
+      .then((tweets) => {
+        tweets.forEach(tweet => {
+          const tweetItem = document.createElement('div');
+        
+          tweetItem.innerHTML = buildTweet(tweet);
+        
+          tweetList.appendChild(tweetItem)
+        })
+      })
+      .catch((errorMessage) => {
+        alert(errorMessage)
+      })
     
   })
 };
