@@ -1,5 +1,5 @@
 import { getTweets } from "./tweet-model.js";
-import { buildTweet } from "./tweet-view.js";
+import { buildTweet, buildEmptyTweetList } from "./tweet-view.js";
 
 // CONTROLADOR
 
@@ -17,7 +17,11 @@ export function tweetListController (tweetList) {
 async function handleShowTweetsButtonClicked(tweetList) {
   try {
     const tweets = await getTweets();
-    renderTweets(tweets, tweetList);
+    if (tweets.length === 0) {
+      renderEmptyTweetsList(tweetList);
+    } else {
+      renderTweets(tweets, tweetList);
+    }
   } catch (errorMessage) {
     alert(errorMessage)
   }
@@ -29,6 +33,10 @@ function renderTweets(tweets, tweetList) {
     tweetItem.innerHTML = buildTweet(tweet);
     tweetList.appendChild(tweetItem)
   })
+}
+
+function renderEmptyTweetsList() {
+  tweetList.innerHTML = buildEmptyTweetList()
 }
 
  /* 

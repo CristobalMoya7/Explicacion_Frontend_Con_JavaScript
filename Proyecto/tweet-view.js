@@ -8,3 +8,7 @@ export function buildTweet(tweet) {
       <p>${tweet.likes} likes</p>
     `
   };
+
+  export function buildEmptyTweetList() {
+     return '<h3>Lo sentimos, no hay tweets disponibles</h3>';
+  }
