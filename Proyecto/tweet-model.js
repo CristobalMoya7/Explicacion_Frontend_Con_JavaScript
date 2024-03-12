@@ -35,9 +35,10 @@ function parseTweets(data) {
   }))
 }
 
-export function getTweets() {
+export async function getTweets() {
   const url = 'https://fake-tweets-api-kc.vercel.app/posts';
 
+  /* 
   return new Promise(function(resolve, reject) {
     fetch(url)
       .then(response => response.json())
@@ -47,5 +48,20 @@ export function getTweets() {
       }) 
       .catch(() => reject('Error al obtener los tweets'))
   })
+  */
+
+  let tweets = [] // Ponemos la variable let por que hay que modificarla y const no se puede. Esa variable la hacemos para poner el return a nivel dela funcion
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    tweets = parseTweets(data);
+  } catch (error) {
+    // error
+    throw new Error('Error al obtener los tweets')
+  }
+
+  return tweets;
+
 }
 
