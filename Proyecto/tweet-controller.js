@@ -11,11 +11,27 @@ export function tweetListController (tweetList) {
   tweetList.appendChild(showTweetsButton);
 
   // 2 Asignar evento al click del boton
-  showTweetsButton.addEventListener('click', async () => {
+  showTweetsButton.addEventListener('click', () => handleShowTweetsButtonClicked(tweetList)) // Lo ponemos en una funcion para que se ejecute al hacer click
+};
 
-    // 3 Mostar los tweets
+async function handleShowTweetsButtonClicked(tweetList) {
+  try {
+    const tweets = await getTweets();
+    renderTweets(tweets, tweetList);
+  } catch (errorMessage) {
+    alert(errorMessage)
+  }
+}
 
-    /* 
+function renderTweets(tweets, tweetList) {
+  tweets.forEach(tweet => {
+    const tweetItem = document.createElement('div');
+    tweetItem.innerHTML = buildTweet(tweet);
+    tweetList.appendChild(tweetItem)
+  })
+}
+
+ /* 
     CODIGO CON .THEN Y .CATCH. PERO ES MEJOR HACERLO CON ASYNC AWAIT
     getTweets()
       .then((tweets) => {
@@ -31,22 +47,3 @@ export function tweetListController (tweetList) {
         alert(errorMessage)
       })
       */
-
-    // Siempre que hay un await tiene que haber un async, esto se pone SIEMPRE en la funcion donde se esta ejecutando el await. Ponemos en async arriba
-
-    // Try Catch, si lo que escribo dentro del try va mal o tiene un error en tiempo de ejecucion, voy a parar la ejecucion e inmediatamente iremos al catch
-    try {
-      const tweets = await getTweets(); // Aqui le decimos al codigo que no ejecute la siguiente linea hasta que no se cumpla esta promesay guarda el resultado en la variable tweets en este caso
-      tweets.forEach(tweet => {
-        const tweetItem = document.createElement('div');
-      
-        tweetItem.innerHTML = buildTweet(tweet);
-      
-        tweetList.appendChild(tweetItem)
-      })
-      
-    } catch (errorMessage) {
-      alert(errorMessage)
-    }
-  })
-};
