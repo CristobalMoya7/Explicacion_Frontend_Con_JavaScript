@@ -15,7 +15,9 @@ export function tweetListController (tweetList) {
 };
 
 async function handleShowTweetsButtonClicked(tweetList) {
+  const spinner = tweetList.querySelector('.lds-ring') // Quitamos la clase Hidden del css spinner
   try {
+    spinner.classList.toggle('hidden'); // Quitamos la clase Hidden del css spinner
     const tweets = await getTweets();
     if (tweets.length === 0) {
       renderEmptyTweetsList(tweetList);
@@ -24,6 +26,8 @@ async function handleShowTweetsButtonClicked(tweetList) {
     }
   } catch (errorMessage) {
     alert(errorMessage)
+  } finally{ // Finally es un anexo para try catch. Esto se va a ejecutar si o si, a si si hay error o no quitaremos la ruleta de carga de nuevo
+    spinner.classList.toggle('hidden'); // Añadimos de nuevo la clase Hidden del css spinner
   }
 }
 
@@ -35,7 +39,7 @@ function renderTweets(tweets, tweetList) {
   })
 }
 
-function renderEmptyTweetsList() {
+function renderEmptyTweetsList(tweetList) {
   tweetList.innerHTML = buildEmptyTweetList()
 }
 

@@ -36,7 +36,7 @@ function parseTweets(data) {
 }
 
 export async function getTweets() {
-  const url = 'https://fake-tweets-api-kc.vercel.app/posts';
+  const url = 'http://localhost:8000/api/tweets'; // Con esto atacamos a sparres para que el gaurde los datos. Sepo /api/nombreRecurso(tweets, users o lo que sea)
 
   /* 
   return new Promise(function(resolve, reject) {
