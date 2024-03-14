@@ -17,3 +17,7 @@ tweetList.addEventListener('error-loading-tweets', (event) => { // Creamos el es
 
 tweetListController(tweetList);
 
+window.addEventListener('offline', () => { // Error en caso de que falle el internet y no cargue
+    showNotification('Has perdido la conexion!', 'error');
+})
+
