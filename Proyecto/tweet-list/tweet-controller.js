@@ -25,10 +25,20 @@ async function handleShowTweetsButtonClicked(tweetList) {
       renderTweets(tweets, tweetList);
     }
   } catch (errorMessage) {
-    alert(errorMessage)
+    dispatchErrorEvent(errorMessage, tweetList) // Usamos la funcion de error
   } finally{ // Finally es un anexo para try catch. Esto se va a ejecutar si o si, a si si hay error o no quitaremos la ruleta de carga de nuevo
     spinner.classList.toggle('hidden'); // Añadimos de nuevo la clase Hidden del css spinner
   }
+}
+
+function dispatchErrorEvent(errorMessage, tweetList) {
+  const event = new CustomEvent('error-loading-tweets', { // Creamos evento de error
+    detail: {
+      message: errorMessage,
+      type: 'error'  // Para que se pinte de rojo como hemos puesto en notification_controller
+    }
+  });
+  tweetList.dispatchEvent(event);
 }
 
 function renderTweets(tweets, tweetList) {
