@@ -1,44 +1,93 @@
-import { createUser } from "./singup-model.js";
+import { loaderController } from "../loader/loader-controller.js";
+import { dispatchEvent } from "../utils/dispatchEvent.js";
+import { createUser } from "./signup-model.js";
 
-export function singupController(singupForm) {
+// Función controladora del formulario de registro
+export function signupController(signupForm) {
+  const spinner = signupForm.querySelector('#spinner');
+  const { showLoader, hideLoader } = loaderController(spinner);
 
-    singupForm.addEventListener('submit', async (event) => {
-        event.preventDefault(); // El preventDefault es para evitar la validacion en el servidor, no se refrescan los datos
-        let errors = []; // Este array solo se rellena si hay errores
+  // Agregar un evento de escucha al formulario de registro
+  signupForm.addEventListener('submit', (event) => {
+    event.preventDefault(); // evitamos validación en servidor
+    
+    // Manejar el envío del formulario de registro
+    handleSignupFormSubmit(signupForm)
+  })
 
-        // Validaciones del formulario
+  // Función para manejar el envío del formulario de registro
+  function handleSignupFormSubmit(signupForm) {
+    let errors = [];
 
-        // Email con formato correcto
-        const email = singupForm.querySelector('#email'); // Esto selecciona el email del DOM
-        const emailRegExp = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/); // Esto dice el formato del email. algo@algo.2o3caracteres
-        // Hace un test de email con la variable emailRegExp para ver si es correcto
-        if (!emailRegExp.test(email.value)) { // Si no es validad
-            errors.push('El email no tiene un formato correcto') // El array solo se rellena si hay errores
-        }
+    // Verificar si el correo electrónico es válido
+    if (!isEmailValid(signupForm)) {
+      errors.push('el email no tiene un formato correcto')      
+    }
+  
+    // Verificar si las contraseñas son iguales
+    if (!arePasswordsEqual(signupForm)) {
+      errors.push('las contraseñas no son iguales')
+    }
 
-        // Las dos password deben coincidir
-        const password = singupForm.querySelector('#password');
-        const passwordConfirm = singupForm.querySelector('#password-confirmation');
-        if (password.value !== passwordConfirm.value) {
-            errors.push('Las contraseñas no son iguales') // El array solo se rellena si hay errores
-        }
+    // Mostrar errores del formulario
+    showFormErrors(errors);
+  
+    // Si no hay errores, registrar al usuario
+    if (errors.length === 0) {
+      signupUser(signupForm);
+    }
+  }
 
-        for (const error of errors) {
-            alert(error) // Lanzamos el error
-        }
+  // Función para verificar si el correo electrónico es válido
+  function isEmailValid(signupForm) {
+    const email = signupForm.querySelector('#email');
+    const emailRegExp = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
 
-        if (errors.length === 0) {
-            // Si todo esta bien, creamos usuario
-            // Usuario y contraseña a sparrest ( Nuestro backend). Peticion al endpoint
-            // /auth/register EndPoint en formato POST
-            // {userName: string; password: string}
-            try {
-                await createUser(email.value, password.value)
-                alert('Creado correctamente')
-                window.location.href = 'index.html'; // Redirigimos a la pagina principal
-            } catch (error) {
-                alert(error)
-            }  
-        }
-    })
+    return emailRegExp.test(email.value)
+  }
+
+  // Función para verificar si las contraseñas son iguales
+  function arePasswordsEqual(signupForm) {
+    const password = signupForm.querySelector('#password');
+    const passwordConfirmation = signupForm.querySelector('#password-confirmation');
+    
+    return password.value === passwordConfirmation.value;
+  }
+
+  // Función para mostrar errores del formulario
+  function showFormErrors(errors) {
+    for (const error of errors) {
+      dispatchEvent('signup-notification', {
+        message: error,
+        type: 'error'
+      }, signupForm)
+    }
+  }
+
+  // Función para registrar al usuario
+  async function signupUser(signupForm) {
+    const email = signupForm.querySelector('#email');
+    const password = signupForm.querySelector('#password');
+
+    try {
+      showLoader()
+      await createUser(email.value, password.value)
+      dispatchEvent('signup-notification', {
+        message: 'Te has registrado correctamente',
+        type: 'success'
+      }, signupForm)
+      
+      // Redirigir después de un breve retraso
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 2000);
+    } catch (error) {
+      dispatchEvent('signup-notification', {
+        message: error,
+        type: 'error'
+      }, signupForm)
+    } finally {
+      hideLoader()
+    }
+  }
 }
